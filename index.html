@@ -1,116 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Supabase Login Debug</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f0f0f0;
-    }
-    #loginDiv {
-      background: #fff;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      width: 320px;
-    }
-    input {
-      padding: 10px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      font-size: 14px;
-    }
-    button {
-      padding: 12px;
-      border-radius: 6px;
-      border: none;
-      font-size: 14px;
-      font-weight: bold;
-      cursor: pointer;
-      color: white;
-      background: #4747ff;
-      transition: all 0.2s;
-    }
-    button:disabled {
-      background: #999;
-      cursor: not-allowed;
-    }
-    button:hover:not(:disabled) {
-      opacity: 0.9;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Supabase Auto Sign Up</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  body {
+    display:flex; justify-content:center; align-items:center; height:100vh;
+    margin:0; font-family:Arial; background:#f0f0f0;
+  }
+  #messageDiv {
+    background:white; padding:30px; border-radius:10px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.2);
+    width:350px; text-align:center; font-size:16px;
+  }
+  .success { color:green; font-weight:bold; }
+  .error { color:red; font-weight:bold; }
+</style>
 </head>
 <body>
 
-<div id="loginDiv">
-  <h2>Supabase Login Test</h2>
-  <input id="email" type="email" placeholder="Email">
-  <input id="password" type="password" placeholder="Password">
-  <button id="signup">Sign Up</button>
-  <button id="login">Login</button>
-</div>
+<div id="messageDiv">Signing up...</div>
 
 <script>
-  // Replace these with your project info
   const supabaseUrl = "https://hanegddroiudmcaezaxj.supabase.co";
   const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhbmVnZGRyb2l1ZG1jYWV6YXhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MDg3ODIsImV4cCI6MjA4ODM4NDc4Mn0.-A7axn1lIHEd4lEv4oxNx8AWevr1ZZnRsAnGujaYys8";
-
   const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-  const emailInput = document.getElementById("email");
-  const passwordInput = document.getElementById("password");
-  const signupBtn = document.getElementById("signup");
-  const loginBtn = document.getElementById("login");
+  const email = "sultan.awad.w@gmail.com";  // CHANGE to your desired email
+  const password = "Test1234!";           // CHANGE to a strong password
+  const messageDiv = document.getElementById("messageDiv");
 
-  async function handleAuth(action) {
-    const email = emailInput.value.trim();
-    const password = passwordInput.value.trim();
-
-    if(!email || !password){
-      alert("Please enter both email and password.");
-      return;
-    }
-
-    // Disable buttons while request is running
-    signupBtn.disabled = true;
-    loginBtn.disabled = true;
-    if(action==="signup") signupBtn.textContent = "Signing up...";
-    if(action==="login") loginBtn.textContent = "Signing in...";
-
+  async function autoSignUp() {
     try {
-      let res;
-      if(action==="signup"){
-        res = await supabase.auth.signUp({email, password});
+      const { data, error } = await supabase.auth.signUp({ email, password });
+
+      if(error){
+        messageDiv.textContent = "Sign up failed: " + error.message;
+        messageDiv.className = "error";
       } else {
-        res = await supabase.auth.signInWithPassword({email, password});
+        messageDiv.textContent = "Sign up successful! Check your email to confirm.";
+        messageDiv.className = "success";
       }
 
-      // Show full response in alert
-      alert("Supabase response:\n" + JSON.stringify(res, null, 2));
-
-    } catch(err){
-      alert("Unexpected error:\n" + err.message);
+      console.log("Supabase response:", data, error);
+    } catch(err) {
+      messageDiv.textContent = "Unexpected error: " + err.message;
+      messageDiv.className = "error";
+      console.error(err);
     }
-
-    // Re-enable buttons and reset text
-    signupBtn.disabled = false;
-    loginBtn.disabled = false;
-    signupBtn.textContent = "Sign Up";
-    loginBtn.textContent = "Login";
   }
 
-  signupBtn.addEventListener("click", ()=> handleAuth("signup"));
-  loginBtn.addEventListener("click", ()=> handleAuth("login"));
+  autoSignUp();
 </script>
 
 </body>
