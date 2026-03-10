@@ -1,58 +1,49 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>Supabase Auto Sign Up</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
-  body {
-    display:flex; justify-content:center; align-items:center; height:100vh;
-    margin:0; font-family:Arial; background:#f0f0f0;
-  }
-  #messageDiv {
-    background:white; padding:30px; border-radius:10px;
-    box-shadow:0 5px 15px rgba(0,0,0,0.2);
-    width:350px; text-align:center; font-size:16px;
-  }
-  .success { color:green; font-weight:bold; }
-  .error { color:red; font-weight:bold; }
-</style>
+  <title>Supabase Add User</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js"></script>
 </head>
 <body>
+  <h2>Add User to Supabase</h2>
+  <input type="text" id="username" placeholder="Username" />
+  <input type="password" id="password" placeholder="Password" />
+  <button id="addUserBtn">Add User</button>
 
-<div id="messageDiv">Signing up...</div>
+  <script>
+    // Initialize Supabase client
+    const SUPABASE_URL = 'https://uhkoictzfseglnxbtkdw.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoa29pY3R6ZnNlZ2xueGJ0ZGt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxMTUyMTQsImV4cCI6MjA4ODY5MTIxNH0.-gVsWi4gdkN3SXid7iiVkncCX8_imrSHlD9HZ0T8ghA';
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-<script>
-  const supabaseUrl = "https://hanegddroiudmcaezaxj.supabase.co";
-  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhhbmVnZGRyb2l1ZG1jYWV6YXhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MDg3ODIsImV4cCI6MjA4ODM4NDc4Mn0.-A7axn1lIHEd4lEv4oxNx8AWevr1ZZnRsAnGujaYys8";
-  const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    async function addUser() {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
 
-  const email = "sultan.awad.w@gmail.com";  // CHANGE to your desired email
-  const password = "Test1234!";           // CHANGE to a strong password
-  const messageDiv = document.getElementById("messageDiv");
-
-  async function autoSignUp() {
-    try {
-      const { data, error } = await supabase.auth.signUp({ email, password });
-
-      if(error){
-        messageDiv.textContent = "Sign up failed: " + error.message;
-        messageDiv.className = "error";
-      } else {
-        messageDiv.textContent = "Sign up successful! Check your email to confirm.";
-        messageDiv.className = "success";
+      if (!username || !password) {
+        alert('Please fill in both fields!');
+        return;
       }
 
-      console.log("Supabase response:", data, error);
-    } catch(err) {
-      messageDiv.textContent = "Unexpected error: " + err.message;
-      messageDiv.className = "error";
-      console.error(err);
+      const { data, error } = await supabase
+        .from('Users-and-passwords') // replace 'users' with your actual table name if different
+        .insert([
+          { username: username, password: password, created_at: new Date().toISOString() }
+        ]);
+
+      if (error) {
+        console.error('Error inserting user:', error.message);
+        alert('Failed to add user: ' + error.message);
+      } else {
+        console.log('User added!', data);
+        alert('User successfully added!');
+        // clear inputs
+        document.getElementById('username').value = '';
+        document.getElementById('password').value = '';
+      }
     }
-  }
 
-  autoSignUp();
-</script>
-
+    document.getElementById('addUserBtn').addEventListener('click', addUser);
+  </script>
 </body>
 </html>
