@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Supabase Login/Signup</title>
+<title>Supabase v2 Login/Signup</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   body {
@@ -16,7 +16,7 @@
   }
 
   #loginDiv {
-    background-color: white;
+    background: white;
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
@@ -53,7 +53,7 @@
     background: #4747ff;
     width: 0%;
     border-radius: 3px;
-    transition: width 0.3s;
+    transition: width 0.2s;
   }
 
   #msg {
@@ -97,25 +97,24 @@
     progressBar.style.width = "0%";
     let width = 0;
     const interval = setInterval(() => {
-      if(width >= 100) {
-        clearInterval(interval);
-      } else {
+      if(width >= 100) clearInterval(interval);
+      else {
         width += 10;
         progressBar.style.width = width + "%";
       }
-    }, 50); // increments every 50ms
+    }, 50);
   }
 
   async function handleAuth(type) {
     const email = emailInput.value.trim();
     const password = passInput.value.trim();
 
-    if(!email || !password) {
+    if(!email || !password){
       setMsg("Please enter both email and password.");
       return;
     }
 
-    let button = type === "signup" ? signupBtn : loginBtn;
+    const button = type === "signup" ? signupBtn : loginBtn;
     button.disabled = true;
     button.textContent = type === "signup" ? "Signing up..." : "Signing in...";
     startProgress();
@@ -123,23 +122,23 @@
 
     try {
       let result;
-      if(type === "signup") {
+      if(type === "signup"){
         result = await supabase.auth.signUp({ email, password });
       } else {
         result = await supabase.auth.signInWithPassword({ email, password });
       }
 
       const { data, error } = result;
-      if(error) {
-        setMsg(`${type.charAt(0).toUpperCase()+type.slice(1)} failed: ${error.message}`);
+      if(error){
+        setMsg(`${type.charAt(0).toUpperCase() + type.slice(1)} failed: ${error.message}`);
         console.error(error);
       } else {
-        setMsg(`${type.charAt(0).toUpperCase()+type.slice(1)} successful!`, "green");
+        setMsg(`${type.charAt(0).toUpperCase() + type.slice(1)} successful!`, "green");
         console.log("Supabase response:", data);
         emailInput.value = "";
         passInput.value = "";
       }
-    } catch(err) {
+    } catch(err){
       setMsg("Unexpected error. Check console.");
       console.error(err);
     } finally {
