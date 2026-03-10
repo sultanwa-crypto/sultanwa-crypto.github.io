@@ -1,15 +1,29 @@
 <!DOCTYPE html>
 <html>
+<head>
+<title>Supabase Test</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
 <body>
 
-<button onclick="test()">Click me</button>
+<h2>Supabase Test</h2>
+<button onclick="test()">Test Supabase</button>
 
 <p id="msg">Waiting...</p>
 
 <script>
+
 function test(){
-  document.getElementById("msg").textContent = "Button works!";
+
+  if(window.supabase){
+    document.getElementById("msg").textContent = "Supabase library loaded."
+  }else{
+    document.getElementById("msg").textContent = "Supabase library FAILED to load."
+  }
+
 }
+
 </script>
 
 </body>
