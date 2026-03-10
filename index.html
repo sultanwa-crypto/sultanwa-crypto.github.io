@@ -1,155 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Supabase v2 Login/Signup</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
-  body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-  }
-
-  #loginDiv {
-    background: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 300px;
-  }
-
-  input {
-    padding: 8px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  button {
-    background: #4747ff;
-    color: white;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    border: none;
-    font-size: 15px;
-    transition: background 0.2s, transform 0.1s;
-  }
-
-  button:hover { background: rgb(60,65,193); }
-  button:active { transform: translateY(2px); }
-
-  #progressBar {
-    height: 5px;
-    background: #4747ff;
-    width: 0%;
-    border-radius: 3px;
-    transition: width 0.2s;
-  }
-
-  #msg {
-    font-size: 14px;
-    color: red;
-    min-height: 18px;
-  }
-</style>
-</head>
+<html>
 <body>
 
-<div id="loginDiv">
-  <h2>Welcome!</h2>
-  <input type="email" id="email" placeholder="Email">
-  <input type="password" id="password" placeholder="Password">
-  <button id="signup">Sign Up</button>
-  <button id="login">Login</button>
-  <div id="progressBar"></div>
-  <div id="msg"></div>
-</div>
+<p id="msg">Testing...</p>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-  // --- Supabase setup ---
-  const supabaseUrl = "https://hanegddroiudmcaezaxj.supabase.co";
-  const supabaseKey = "sb_publishable_iaG8Lm7N_hwXyrHPTTfH6w_kUkISgbH";
-  const supabase = supabase.createClient(supabaseUrl, supabaseKey);
-
-  const emailInput = document.getElementById("email");
-  const passInput = document.getElementById("password");
-  const signupBtn = document.getElementById("signup");
-  const loginBtn = document.getElementById("login");
-  const msgDiv = document.getElementById("msg");
-  const progressBar = document.getElementById("progressBar");
-
-  function setMsg(text, color="red") {
-    msgDiv.textContent = text;
-    msgDiv.style.color = color;
-  }
-
-  function startProgress() {
-    progressBar.style.width = "0%";
-    let width = 0;
-    const interval = setInterval(() => {
-      if(width >= 100) clearInterval(interval);
-      else {
-        width += 10;
-        progressBar.style.width = width + "%";
-      }
-    }, 50);
-  }
-
-  async function handleAuth(type) {
-    const email = emailInput.value.trim();
-    const password = passInput.value.trim();
-
-    if(!email || !password){
-      setMsg("Please enter both email and password.");
-      return;
-    }
-
-    const button = type === "signup" ? signupBtn : loginBtn;
-    button.disabled = true;
-    button.textContent = type === "signup" ? "Signing up..." : "Signing in...";
-    startProgress();
-    setMsg("");
-
-    try {
-      let result;
-      if(type === "signup"){
-        result = await supabase.auth.signUp({ email, password });
-      } else {
-        result = await supabase.auth.signInWithPassword({ email, password });
-      }
-
-      const { data, error } = result;
-      if(error){
-        setMsg(`${type.charAt(0).toUpperCase() + type.slice(1)} failed: ${error.message}`);
-        console.error(error);
-      } else {
-        setMsg(`${type.charAt(0).toUpperCase() + type.slice(1)} successful!`, "green");
-        console.log("Supabase response:", data);
-        emailInput.value = "";
-        passInput.value = "";
-      }
-    } catch(err){
-      setMsg("Unexpected error. Check console.");
-      console.error(err);
-    } finally {
-      button.disabled = false;
-      button.textContent = type === "signup" ? "Sign Up" : "Login";
-      progressBar.style.width = "100%";
-    }
-  }
-
-  signupBtn.addEventListener("click", () => handleAuth("signup"));
-  loginBtn.addEventListener("click", () => handleAuth("login"));
+if(window.supabase){
+  document.getElementById("msg").textContent = "Supabase library loaded!";
+}else{
+  document.getElementById("msg").textContent = "Supabase library FAILED to load.";
+}
 </script>
 
 </body>
