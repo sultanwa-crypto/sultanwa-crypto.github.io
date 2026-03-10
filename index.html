@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Supabase Add User</title>
+<title>Add User</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
@@ -16,12 +16,13 @@
 <p id="status"></p>
 
 <script>
-const SUPABASE_URL = "https://uhkoictzfseglnxbtkdw.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoa29pY3R6ZnNlZ2xueGJ0ZGt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxMTUyMTQsImV4cCI6MjA4ODY5MTIxNH0.-gVsWi4gdkN3SXid7iiVkncCX8_imrSHlD9HZ0T8ghA";
+
+const SUPABASE_URL = "https://uhkoictzfseglnxbtdkw.supabase.co";
+const SUPABASE_KEY = "sb_publishable_-PUjgfccR3jtZcLLIyVz0w_ZL8966QQ";
 
 const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-async function addUser() {
+async function addUser(){
 
 const username = document.getElementById("username").value;
 const password = document.getElementById("password").value;
@@ -38,13 +39,15 @@ created_at: new Date().toISOString()
 }
 ]);
 
-if (error) {
+if(error){
 document.getElementById("status").innerText = "Error: " + error.message;
-} else {
-document.getElementById("status").innerText = "User added successfully!";
+}
+else{
+document.getElementById("status").innerText = "User added!";
 }
 
 }
+
 </script>
 
 </body>
