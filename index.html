@@ -1,29 +1,150 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Supabase Test</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <title>Supabase Login Test</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    body {
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      height:100vh;
+      margin:0;
+      font-family: Arial, sans-serif;
+      background:#f0f0f0;
+    }
+
+    #loginDiv {
+      background:white;
+      padding:30px;
+      border-radius:10px;
+      box-shadow:0 10px 25px rgba(0,0,0,0.2);
+      display:flex;
+      flex-direction:column;
+      gap:15px;
+      width:320px;
+    }
+
+    input {
+      padding:10px;
+      font-size:14px;
+      border-radius:6px;
+      border:1px solid #ccc;
+      transition:border 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus {
+      outline:none;
+      border-color:#4747ff;
+      box-shadow:0 0 5px rgba(71,71,255,0.5);
+    }
+
+    button {
+      position: relative;
+      background: #4747ff;
+      color: white;
+      padding:12px 0;
+      border:none;
+      border-radius:6px;
+      cursor:pointer;
+      font-size:16px;
+      font-weight:600;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      transition: all 0.2s ease;
+      overflow: hidden;
+    }
+
+    button:hover {
+      background:#2f2fd1;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+      transform: translateY(-2px);
+    }
+
+    button:active {
+      background:#1d1dbd;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+      transform: translateY(1px);
+    }
+
+    #msg {
+      min-height:20px;
+      font-weight:bold;
+      text-align:center;
+    }
+
+  </style>
 </head>
 
 <body>
 
-<h2>Supabase Test</h2>
-<button onclick="test()">Test Supabase</button>
+<div id="loginDiv">
 
-<p id="msg">Waiting...</p>
+<h2>Welcome Back</h2>
+
+<input id="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
+
+<button id="signup">Sign Up</button>
+<button id="login">Login</button>
+
+<div id="msg">Page loaded</div>
+
+</div>
 
 <script>
+const msg = document.getElementById("msg")
 
-function test(){
-
-  if(window.supabase){
-    document.getElementById("msg").textContent = "Supabase library loaded."
-  }else{
-    document.getElementById("msg").textContent = "Supabase library FAILED to load."
-  }
-
+function say(t,color="black"){
+  msg.textContent = t
+  msg.style.color = color
 }
 
+say("JavaScript running")
+
+if(!window.supabase){
+  say("Supabase library missing","red")
+  throw new Error("Supabase missing")
+}
+
+const { createClient } = window.supabase
+
+const supabase = createClient(
+"https://hanegddroiudmcaezaxj.supabase.co",
+"sb_publishable_iaG8Lm7N_hwXyrHPTTfH6w_kUkISgbH"
+)
+
+say("Supabase client created")
+
+document.getElementById("signup").onclick = async () => {
+  say("Signing up…")
+  const email=document.getElementById("email").value
+  const password=document.getElementById("password").value
+  if(!email || !password){
+    say("Enter both email and password","red")
+    return
+  }
+  try {
+    const {data,error}=await supabase.auth.signUp({ email,password })
+    if(error){ say(error.message,"red") }
+    else { say("Signup successful!","green") }
+  } catch(err){ say("Unexpected signup error","red"); console.error(err) }
+}
+
+document.getElementById("login").onclick = async () => {
+  say("Signing in…")
+  const email=document.getElementById("email").value
+  const password=document.getElementById("password").value
+  if(!email || !password){
+    say("Enter both email and password","red")
+    return
+  }
+  try {
+    const {data,error}=await supabase.auth.signInWithPassword({ email,password })
+    if(error){ say(error.message,"red") }
+    else { say("Login successful!","green") }
+  } catch(err){ say("Unexpected login error","red"); console.error(err) }
+}
 </script>
 
 </body>
