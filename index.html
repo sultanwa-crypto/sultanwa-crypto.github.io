@@ -43,7 +43,6 @@ button{
 
 button:disabled{
   background:#888;
-  cursor:not-allowed;
 }
 
 #message{
@@ -64,10 +63,19 @@ button:disabled{
 <button id="signup">Sign Up</button>
 <button id="login">Login</button>
 
-<div id="message"></div>
+<div id="message">Page loaded.</div>
 </div>
 
 <script>
+
+const messageDiv = document.getElementById("message")
+
+function showMessage(msg,color="black"){
+  messageDiv.textContent = msg
+  messageDiv.style.color = color
+}
+
+showMessage("JavaScript started")
 
 const supabaseUrl = "https://hanegddroiudmcaezaxj.supabase.co"
 const supabaseKey = "sb_publishable_iaG8Lm7N_hwXyrHPTTfH6w_kUkISgbH"
@@ -75,65 +83,84 @@ const supabase = window.supabase.createClient(supabaseUrl, supabaseKey)
 
 const signupBtn = document.getElementById("signup")
 const loginBtn = document.getElementById("login")
-const messageDiv = document.getElementById("message")
 
-function showMessage(msg, success=false){
-  messageDiv.textContent = msg
-  messageDiv.style.color = success ? "green" : "red"
-}
+signupBtn.onclick = async function(){
 
-async function performAuth(action){
+  showMessage("Signup button clicked")
 
   const email = document.getElementById("email").value
   const password = document.getElementById("password").value
 
   if(!email || !password){
-    showMessage("Please enter both email and password.")
+    showMessage("Enter email and password","red")
     return
   }
 
   signupBtn.disabled = true
-  loginBtn.disabled = true
-
-  if(action === "signup"){
-    signupBtn.textContent = "Signing up..."
-  } else {
-    loginBtn.textContent = "Signing in..."
-  }
+  signupBtn.textContent = "Signing up..."
 
   try{
 
-    let result
+    showMessage("Contacting Supabase...")
 
-    if(action === "signup"){
-      result = await supabase.auth.signUp({email, password})
-    } else {
-      result = await supabase.auth.signInWithPassword({email, password})
-    }
-
-    const {data, error} = result
+    const {data,error} = await supabase.auth.signUp({
+      email:email,
+      password:password
+    })
 
     if(error){
-      showMessage(action + " failed: " + error.message)
-    } else {
-      showMessage(action + " successful!", true)
-      document.getElementById("email").value = ""
-      document.getElementById("password").value = ""
+      showMessage("Signup failed: "+error.message,"red")
+    }else{
+      showMessage("Signup success!","green")
     }
 
-  } catch(err){
-    showMessage("Unexpected error.")
+  }catch(err){
+    showMessage("Unexpected error","red")
   }
 
   signupBtn.disabled = false
-  loginBtn.disabled = false
-
   signupBtn.textContent = "Sign Up"
-  loginBtn.textContent = "Login"
+
 }
 
-signupBtn.addEventListener("click", ()=>performAuth("signup"))
-loginBtn.addEventListener("click", ()=>performAuth("login"))
+loginBtn.onclick = async function(){
+
+  showMessage("Login button clicked")
+
+  const email = document.getElementById("email").value
+  const password = document.getElementById("password").value
+
+  if(!email || !password){
+    showMessage("Enter email and password","red")
+    return
+  }
+
+  loginBtn.disabled = true
+  loginBtn.textContent = "Signing in..."
+
+  try{
+
+    showMessage("Contacting Supabase...")
+
+    const {data,error} = await supabase.auth.signInWithPassword({
+      email:email,
+      password:password
+    })
+
+    if(error){
+      showMessage("Login failed: "+error.message,"red")
+    }else{
+      showMessage("Login success!","green")
+    }
+
+  }catch(err){
+    showMessage("Unexpected error","red")
+  }
+
+  loginBtn.disabled = false
+  loginBtn.textContent = "Login"
+
+}
 
 </script>
 
