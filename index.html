@@ -1,49 +1,51 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Supabase Add User</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js"></script>
+<title>Supabase Add User</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
+
 <body>
-  <h2>Add User to Supabase</h2>
-  <input type="text" id="username" placeholder="Username" />
-  <input type="password" id="password" placeholder="Password" />
-  <button id="addUserBtn">Add User</button>
 
-  <script>
-    // Initialize Supabase client
-    const SUPABASE_URL = 'https://uhkoictzfseglnxbtkdw.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoa29pY3R6ZnNlZ2xueGJ0ZGt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxMTUyMTQsImV4cCI6MjA4ODY5MTIxNH0.-gVsWi4gdkN3SXid7iiVkncCX8_imrSHlD9HZ0T8ghA';
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+<h2>Add User</h2>
 
-    async function addUser() {
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
+<input id="username" placeholder="username">
+<input id="password" type="password" placeholder="password">
+<button onclick="addUser()">Add User</button>
 
-      if (!username || !password) {
-        alert('Please fill in both fields!');
-        return;
-      }
+<p id="status"></p>
 
-      const { data, error } = await supabase
-        .from('Users-and-passwords') // replace 'users' with your actual table name if different
-        .insert([
-          { username: username, password: password, created_at: new Date().toISOString() }
-        ]);
+<script>
+const SUPABASE_URL = "https://uhkoictzfseglnxbtkdw.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoa29pY3R6ZnNlZ2xueGJ0ZGt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxMTUyMTQsImV4cCI6MjA4ODY5MTIxNH0.-gVsWi4gdkN3SXid7iiVkncCX8_imrSHlD9HZ0T8ghA";
 
-      if (error) {
-        console.error('Error inserting user:', error.message);
-        alert('Failed to add user: ' + error.message);
-      } else {
-        console.log('User added!', data);
-        alert('User successfully added!');
-        // clear inputs
-        document.getElementById('username').value = '';
-        document.getElementById('password').value = '';
-      }
-    }
+const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    document.getElementById('addUserBtn').addEventListener('click', addUser);
-  </script>
+async function addUser() {
+
+const username = document.getElementById("username").value;
+const password = document.getElementById("password").value;
+
+document.getElementById("status").innerText = "Sending...";
+
+const { data, error } = await client
+.from("Users-and-passwords")
+.insert([
+{
+username: username,
+password: password,
+created_at: new Date().toISOString()
+}
+]);
+
+if (error) {
+document.getElementById("status").innerText = "Error: " + error.message;
+} else {
+document.getElementById("status").innerText = "User added successfully!";
+}
+
+}
+</script>
+
 </body>
 </html>
